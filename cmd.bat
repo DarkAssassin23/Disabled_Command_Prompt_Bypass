@@ -5,7 +5,8 @@ echo.
 set currentPath="%userprofile%"
 cd /d %currentPath%
 
-set /p command="%CD%>"
+set /p input="%CD%>"
+set command=%input:"=""%
 if "%command%" == "exit" (goto 'close')
 cmd.exe /c "%command% & cd > %userprofile%\pwd.txt"
 echo.
@@ -14,7 +15,8 @@ goto 'prompt'
 : 'prompt'
 set /p currentPath=<%userprofile%\pwd.txt
 cd /d %currentPath%
-set /p command="%CD%>"
+set /p input="%CD%>"
+set command=%input:"=""%
 if "%command%" == "exit" (goto 'close')
 cmd.exe /c "%command% & cd > %userprofile%\pwd.txt"
 echo.
