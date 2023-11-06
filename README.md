@@ -1,6 +1,6 @@
 # Command Prompt for Standard Users When it is Disabled by the Administrator
-**Version:** 1.0.1<br />
-**Published Date:** 11/15/2022
+**Version:** 1.1<br />
+**Published Date:** 11/6/2023
 
 About
 ----------------------
