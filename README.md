@@ -1,6 +1,6 @@
 # Command Prompt for Standard Users When it is Disabled by the Administrator
-**Version:** 1.1<br />
-**Published Date:** 11/6/2023
+**Version:** 2.0<br />
+**Published Date:** 11/13/2023
 
 About
 ----------------------
@@ -30,26 +30,17 @@ you for your next command. By doing this, you no longer run into the issue
 of “the command prompt has been disabled by your administrator” by leaving 
 the command prompt open like `cmd.exe /k` would do, or just straight up 
 opening the command prompt. 
+
+As of version 2.0 this script now has full support for creating and modifying
+temporary environment variables just like the normal command prompt
 ___________________
 
-Drawbacks of this solution
--------------------------
-One minor issue this script has is if you ever want to set variables on the
-command prompt, unfortunately, at this time you are unable to do so with 
-this script. 
-
-If you have any solutions to this issue then please reach out to me and 
-let me know. 
-_______________
 
 Future improvements
 ---------------
-As mentioned if you have any solutions to fix the issue of being unable to 
-set variables on the command prompt, please reach out to me. 
-
-Also, the script currently relies on the use of an external file for keeping
-track of directory changes because of the fact it uses a temporary command
-prompt environment to execute commands. Personally, I do not think this is 
-the cleanest solution, but it works. If you have any recommendations to 
-improve this, without losing any of the current functionality, I would 
-also be eager to hear that as well.
+The script currently relies on the use of an external files for keeping
+track of directory changes and environment variables because of the fact 
+it uses a temporary command prompt environment to execute commands. 
+Personally, I do not think this is the cleanest solution, but it works. 
+If you have any recommendations to improve this, without losing any of 
+the current functionality, I would also be eager to hear that as well.

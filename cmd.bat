@@ -1,31 +1,58 @@
 @echo off
 setlocal enabledelayedexpansion
 
+:: Set temporary directory
+set tempDir=%userprofile%\.cmd_tmp
+if not exist %tempDir% mkdir %tempDir%
+
 :: Get the current Windows build version and print it
-ver > %userprofile%\version.txt
-for /f "delims=" %%x in (%userprofile%\version.txt) do set Build=%%x
-rm %userprofile%\version.txt
+ver > %tempDir%\version.txt
+for /f "delims=" %%x in (%tempDir%\version.txt) do set Build=%%x
+del %tempDir%\version.txt
 echo %Build%
 echo (c) Microsoft Corporation. All rights reserved.
 echo.
 
-:: Set the users home directory as the present working directory
-echo %userprofile% > %userprofile%\pwd.txt
+:: Export current environment variables
+set > %tempDir%\env.txt
 
-set setPathCMD=" & cd > %userprofile%\pwd.txt"
+:: Create batch file to update environment variables
+echo @echo off > %tempDir%\updateEnvs.bat
+echo. >> %tempDir%\updateEnvs.bat
+echo for /f "delims=" %%%%x in (%tempDir%\env.txt) do set %%%%x >> %tempDir%\updateEnvs.bat
+
+set currentPath=%userprofile%
+
+:: Commands to be run before and after the user entered command
+:: to support environment variables and change directories
+set initCMD="call %tempDir%\updateEnvs.bat"
+set postCMD="cd > %tempDir%\pwd.txt & set > %tempDir%\env.txt"
+
 :: Strip the quotes
-set setPathCMD=!setPathCMD:~1,-1!
+set initCMD=!initCMD:~1,-1!
+set postCMD=!postCMD:~1,-1!
 
 : 'prompt'
-set /p currentPath=<%userprofile%\pwd.txt
 cd /d %currentPath%
-set /p input="%CD%>"
+set /p input="%currentPath%>"
 set "command=%input:"="%"
 if !command! == exit (goto 'close')
-cmd.exe /c !command!!setPathCMD!
+
+:: Create batch file to run the pre, post, and actual command to run
+:: Note: This allows for enviornment variables to be modified
+echo @echo off > %tempDir%\run.bat
+echo setlocal enabledelayedexpansion >> %tempDir%\run.bat
+echo !initCMD! >> %tempDir%\run.bat
+echo !command! >> %tempDir%\run.bat
+echo !postCMD! >> %tempDir%\run.bat
+
+cmd.exe /c call %tempDir%\run.bat
+
+set /p currentPath=<%tempDir%\pwd.txt
+
 echo.
 goto 'prompt'
 
 : 'close'
-if exist  %userprofile%\pwd.txt del %userprofile%\pwd.txt
+if exist %tempDir% rmdir /s /q %tempDir%
 exit
