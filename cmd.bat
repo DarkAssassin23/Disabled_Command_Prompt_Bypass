@@ -1,12 +1,31 @@
 @echo off
 setlocal enabledelayedexpansion
 
+:: Get the PID of this window
+title=bypasscmd
+set windowPID = 0
+for /f "tokens=2 usebackq" %%f IN (`tasklist /NH /FI "WindowTitle eq bypasscmd*"`) do (
+    set windowPID=%%f
+)
+title=Command Prompt
+
 :: Set temporary directory
-set tempDir="%userprofile%\.cmd_tmp"
+set tempDir="%userprofile%\.cmd_tmp-%windowPID%"
 :: Strip the quotes
 set tempDir=!tempDir:~1,-1!
-
 if not exist "%tempDir%" mkdir "%tempDir%"
+
+:: Find all temp cmd dirs and remove ones whose window is no longer running
+for /f "tokens=5 usebackq" %%F IN (`dir "%userprofile%" ^| find ".cmd_tmp"`) do (
+    set tmpdir=%%F
+    set cmdPID=!tmpdir:*-=!
+    for /f "tokens=* usebackq" %%f in (`tasklist /FI "PID eq !cmdPID!"`) do (
+        set out=%%f
+    )
+    if "!out!" == "INFO: No tasks are running which match the specified criteria." (
+        rmdir /s /q "%userprofile%\!tmpdir!"
+    )
+)
 
 :: Get the current Windows build version and print it
 ver > "%tempDir%\version.txt"
